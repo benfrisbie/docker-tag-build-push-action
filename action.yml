@@ -25,7 +25,7 @@ inputs:
   push:
     description: "Should the image be pushed to a registry"
     required: false
-    default: 'false'
+    default: ${{ github.event_name == 'push' }}
   image:
     description: "Docker image name to use as base"
     required: true
@@ -60,7 +60,6 @@ runs:
           type=semver,pattern={{version}}
           type=semver,pattern={{major}}.{{minor}}
           type=semver,pattern={{major}}
-          type=ref,event=branch
           type=ref,event=pr
           type=schedule
           type=edge
