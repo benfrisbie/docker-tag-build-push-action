@@ -52,6 +52,7 @@ runs:
         username: ${{ inputs.username }}
         password: ${{ inputs.password }}
     - uses: docker/metadata-action@v4
+      id: meta
       with:
         images: |
           ${{ inputs.image }}
