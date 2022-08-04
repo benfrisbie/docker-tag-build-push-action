@@ -17,9 +17,11 @@ inputs:
   username:
     description: "Username used to login against the Docker registry"
     required: false
+    default: ${{ github.actor }}
   password:
     description: "Password or personal access token used to login against the Docker registry"
     required: false
+    default: ${{ github.token }}
   push:
     description: "Should the image be pushed to a registry"
     required: false
@@ -53,7 +55,7 @@ runs:
       id: meta
       with:
         images: |
-          ${{ inputs.image }}
+          ${{ inputs.registry }}/${{ inputs.image }}
         tags: |
           type=semver,pattern={{version}}
           type=semver,pattern={{major}}.{{minor}}
