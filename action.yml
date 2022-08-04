@@ -53,7 +53,8 @@ runs:
         password: ${{ inputs.password }}
     - uses: docker/metadata-action@v4
       with:
-        images: ${{ inputs.image }}
+        images: |
+          ${{ inputs.image }}
         tags: |
           type=semver,pattern={{version}}
           type=semver,pattern={{major}}.{{minor}}
