@@ -64,11 +64,11 @@ runs:
           type=schedule
           type=edge
           type=sha
-      - uses: docker/build-push-action@v3
-        with:
-          context: ${{ inputs.context }}
-          file: ${{ inputs.file }}
-          push: ${{ inputs.push }}
-          build-args: ${{ inputs.build-args }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+    - uses: docker/build-push-action@v3
+      with:
+        context: ${{ inputs.context }}
+        file: ${{ inputs.file }}
+        push: ${{ inputs.push }}
+        build-args: ${{ inputs.build-args }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
