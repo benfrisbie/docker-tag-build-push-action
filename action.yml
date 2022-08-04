@@ -17,11 +17,9 @@ inputs:
   username:
     description: "Username used to login against the Docker registry"
     required: false
-    default: ${{ github.actor }}
   password:
     description: "Password or personal access token used to login against the Docker registry"
     required: false
-    default: ${{ secrets.GITHUB_TOKEN }}
   push:
     description: "Should the image be pushed to a registry"
     required: false
