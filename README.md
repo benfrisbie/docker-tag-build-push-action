@@ -1,5 +1,5 @@
-[![GitHub release](https://img.shields.io/github/release/docker/metadata-action.svg?style=flat-square)](https://github.com/benfrisbie/docker-tag-build-push-action/releases/latest)
-[![GitHub marketplace](https://img.shields.io/badge/marketplace-docker--metadata--action-blue?logo=github&style=flat-square)](https://github.com/marketplace/actions/docker-tag-build-push)
+[![GitHub release](https://img.shields.io/github/release/benfrisbie/docker-tag-build-push-action.svg?style=flat-square)](https://github.com/benfrisbie/docker-tag-build-push-action/releases/latest)
+[![GitHub marketplace](https://img.shields.io/badge/marketplace-benfrisbie--docker--tag--build--push--action-blue?logo=github&style=flat-square)](https://github.com/marketplace/actions/docker-tag-build-push)
 
 ## About
 A composite action to tag, build, and optionally login and push a docker image to a registry.
