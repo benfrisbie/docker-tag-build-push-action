@@ -33,7 +33,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: benfrisbie/docker-tag-build-push-action/@main
+      - uses: benfrisbie/docker-tag-build-push-action/@v1
 ```
 ### Push to Docker Hub
 ```yaml
@@ -51,7 +51,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: benfrisbie/docker-tag-build-push-action/@main
+      - uses: benfrisbie/docker-tag-build-push-action/@v1
         with:
             registry: 'docker.io'
             username: ${{ secrets.DOCKERHUB_USERNAME }}
