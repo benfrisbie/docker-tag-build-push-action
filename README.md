@@ -4,18 +4,17 @@
 ## About
 A composite action to tag, build, and optionally login and push a docker image to a registry.
 
-This action basically just chains calls to the following well known actions with some sane defaults.
+This action basically chains calls to the following popular actions with some common defaults.
 - [docker/login-action](https://github.com/docker/login-action)
 - [docker/metadata-action](https://github.com/docker/metadata-action)
 - [docker/build-push-action](https://github.com/docker/build-push-action)
-
-Defaults are set to push an image named `${{ github.repository }}` to the (ghcr.io) registry on git push events `${{ github.event_name == 'push' }}` using the username:`${{ github.actor }}` and password:`${{ github.token }}`.
-
 ___
 
 * [Usage](#usage)
     * [Basic](#basic)
     * [Push to Docker Hub](#push-to-docker-hub)
+* [Defaults](#defaults)
+* [Inputs](#inputs)
 
 ## Usage
 ### Basic
@@ -58,3 +57,26 @@ jobs:
             username: ${{ secrets.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_TOKEN }}
 ```
+
+## Defaults
+Defaults are defined to:
+- Checkout the repository
+- Build an image named `${{ github.repository }}:<tag>` 
+- The `<tag>` is determined based on the event causing the build as defined at [docker/metadata-action#tags-input](https://github.com/docker/metadata-action#tags-input)
+- Push image on git push events `${{ github.event_name == 'push' }}`
+- Default registry of [ghcr.io](ghcr.io)
+    - Username = `${{ github.actor }}`
+    - Password = `${{ github.token }}`
+
+## Inputs
+| Name         | Type   | Description                                                                                   | Default                                                                |
+|--------------|--------|-----------------------------------------------------------------------------------------------| ---------------------------------------------------------------------- |
+| `checkout`   | String | Boolean ('true' or 'false') string of whether to checkout the repo at the start of the action | 'true'                                                                 |
+| `push`       | String | Boolean ('true' or 'false') string of whether to push the image to the registry               | `${{ github.event_name == 'push' }}`                                   |
+| `registry`   | String | Server address of Docker registry.                                                            | 'ghcr.io'                                                              |
+| `username`   | String | Username used to log against the Docker registry                                              | `${{ github.actor }}`                                                  |
+| `password`   | String | Password or personal access token used to log against the Docker registry                     | `${{ github.token }}`                                                  |
+| `image`      | String | Docker image name to use as base                                                              | `${{ github.repository }}`                                             |
+| `build-args` | List   | Newline delimited string of build-time variables                                              | ''                                                                     |
+| `context`    | String | Build's context is the set of files located in the specified PATH or URL                      | [git context](https://github.com/docker/build-push-action#git-context) |
+| `file`       | String | Path to the Dockerfile                                                                        | `{context}/Dockerfile`                                                 |
