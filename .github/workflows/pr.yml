@@ -1,0 +1,14 @@
+name: PR Tests
+
+on:
+  pull_request:
+
+jobs:
+  basic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: .
+          with:
+            file: ./tests/Dockerfile
+            push: 'true'
