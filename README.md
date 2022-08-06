@@ -106,7 +106,7 @@ In an attempt to make this action easier to use, the following defaults are set:
 - Build an image named `ghcr.io/${{ github.repository }}` 
 - The image tags are determined based on the event causing the build as defined at [docker/metadata-action#tags-input](https://github.com/docker/metadata-action#tags-input)
 - Push image to registry on git push events `${{ github.event_name == 'push' }}`
-- Default registry of [ghcr.io](ghcr.io)
+- Default registry of ghcr.io
     - Username = `${{ github.actor }}`
     - Password = `${{ github.token }}`
 
