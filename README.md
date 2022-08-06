@@ -60,6 +60,7 @@ jobs:
     steps:
       - uses: benfrisbie/docker-tag-build-push-action/@v1
         with:
+            images: docker.io/${{ github.repository }}
             registry: 'docker.io'
             username: ${{ secrets.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_TOKEN }}
