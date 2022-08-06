@@ -16,4 +16,3 @@ jobs:
       - uses: ./
         with:
           file: ./tests/Dockerfile
-          push: 'true'

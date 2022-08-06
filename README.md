@@ -7,6 +7,8 @@ A composite action to tag, build, and optionally login and push a docker image t
 
 This action basically chains calls to the following popular actions with some common defaults.
 - [docker/login-action](https://github.com/docker/login-action)
+- [docker/setup-qemu-action](https://github.com/docker/setup-qemu-action)
+- [docker/setup-buildx-action](https://github.com/docker/setup-buildx-action)
 - [docker/metadata-action](https://github.com/docker/metadata-action)
 - [docker/build-push-action](https://github.com/docker/build-push-action)
 ___
@@ -14,11 +16,14 @@ ___
 * [Usage](#usage)
     * [Basic](#basic)
     * [Push to Docker Hub](#push-to-docker-hub)
-* [Defaults](#defaults)
+    * [Push to Multiple Registries](#push-to-multiple-registries)
 * [Inputs](#inputs)
+    * [Defaults](#defaults)
+* [Outputs](#outputs)
 
 ## Usage
 ### Basic
+Push to ghcr.io by default
 ```yaml
 name: Docker
 
@@ -36,6 +41,7 @@ jobs:
     steps:
       - uses: benfrisbie/docker-tag-build-push-action/@v1
 ```
+
 ### Push to Docker Hub
 ```yaml
 name: Docker
@@ -59,25 +65,51 @@ jobs:
             password: ${{ secrets.DOCKERHUB_TOKEN }}
 ```
 
-## Defaults
-Defaults are defined to:
-- Checkout the repository
-- Build an image named `${{ github.repository }}:<tag>` 
-- The `<tag>` is determined based on the event causing the build as defined at [docker/metadata-action#tags-input](https://github.com/docker/metadata-action#tags-input)
-- Push image on git push events `${{ github.event_name == 'push' }}`
+### Push to Multiple Registries
+Push to Docker Hub and ghcr.io. First login to docker.io and the automatically login to ghcr.io by default.
+```yaml
+name: Docker
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*.*.*'
+  pull_request:
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: docker/login-action@v2
+        with:
+            registry: 'docker.io'
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - uses: benfrisbie/docker-tag-build-push-action/@v1
+        with:
+            images: |
+                docker.io/${{ github.repository }}
+                ghcr.io/${{ github.repository }}
+```
+
+## Inputs
+The inputs are the same as the ones defined in:
+- [docker/login-action#inputs](https://github.com/docker/login-action#inputs)
+- [docker/metadata-action#inputs](https://github.com/docker/metadata-action#inputs)
+- [docker/build-push-action#inputs](https://github.com/docker/build-push-action#inputs)
+
+### Defaults
+In an attempt to make this action easier to use, the following defaults are set:
+- Build an image named `ghcr.io/${{ github.repository }}` 
+- The image tags are determined based on the event causing the build as defined at [docker/metadata-action#tags-input](https://github.com/docker/metadata-action#tags-input)
+- Push image to registry on git push events `${{ github.event_name == 'push' }}`
 - Default registry of [ghcr.io](ghcr.io)
     - Username = `${{ github.actor }}`
     - Password = `${{ github.token }}`
 
-## Inputs
-| Name         | Type   | Description                                                                                   | Default                                                                |
-|--------------|--------|-----------------------------------------------------------------------------------------------| ---------------------------------------------------------------------- |
-| `checkout`   | String | Boolean ('true' or 'false') string of whether to checkout the repo at the start of the action | 'true'                                                                 |
-| `push`       | String | Boolean ('true' or 'false') string of whether to push the image to the registry               | `${{ github.event_name == 'push' }}`                                   |
-| `registry`   | String | Server address of Docker registry.                                                            | 'ghcr.io'                                                              |
-| `username`   | String | Username used to log against the Docker registry                                              | `${{ github.actor }}`                                                  |
-| `password`   | String | Password or personal access token used to log against the Docker registry                     | `${{ github.token }}`                                                  |
-| `image`      | String | Docker image name to use as base                                                              | `${{ github.repository }}`                                             |
-| `build-args` | List   | Newline delimited string of build-time variables                                              | ''                                                                     |
-| `context`    | String | Build's context is the set of files located in the specified PATH or URL                      | [git context](https://github.com/docker/build-push-action#git-context) |
-| `file`       | String | Path to the Dockerfile                                                                        | `{context}/Dockerfile`                                                 |
+## Outputs
+The outputs are the same as the ones defined in:
+- [docker/metadata-action#outputs](https://github.com/docker/metadata-action#outputs)
+- [docker/build-push-action#outputs](https://github.com/docker/build-push-action#outputs)

@@ -1,37 +1,92 @@
 name: 'Docker Tag Build Push'
 author: 'benfrisbie'
-description: 'A composite action to tag and build a docker image, then optionally login to a registry and push the image.'
+description: 'A composite action to tag and build a docker images, then optionally login to a registry and push the images.'
 branding:
   icon: 'anchor'
   color: 'blue'
 
 inputs:
-  checkout:
-    description: "Should the repository be checked out"
-    required: false
-    default: 'true'
+  # inputs from https://github.com/docker/login-action
   registry:
-    description: "Server address of Docker registry"
+    description: 'Server address of Docker registry. If not set then will default to Docker Hub'
     required: false
     default: ghcr.io
   username:
-    description: "Username used to login against the Docker registry"
+    description: 'Username used to log against the Docker registry'
     required: false
     default: ${{ github.actor }}
   password:
-    description: "Password or personal access token used to login against the Docker registry"
+    description: 'Password or personal access token used to log against the Docker registry'
     required: false
     default: ${{ github.token }}
-  push:
-    description: "Should the image be pushed to a registry"
+  ecr:
+    description: 'Specifies whether the given registry is ECR (auto, true or false)'
+    default: 'auto'
     required: false
-    default: ${{ github.event_name == 'push' }}
-  image:
-    description: "Docker image name to use as base"
+  logout:
+    description: 'Log out from the Docker registry at the end of a job'
+    default: 'true'
+    required: false
+  # inputs from https://github.com/docker/metadata-action
+  images:
+    description: 'List of Docker images to use as base name for tags'
     required: true
-    default: ${{ github.repository }}
+    default: ${{ inputs.registry }}/${{ github.repository }}
+  tags:
+    description: 'List of tags as key-value pair attributes'
+    required: false
+    default: |
+      type=semver,pattern={{version}}
+      type=semver,pattern={{major}}.{{minor}}
+      type=semver,pattern={{major}}
+      type=ref,event=pr
+      type=ref,event=branch
+      type=schedule
+      type=edge
+      type=sha
+  flavor:
+    description: 'Flavors to apply'
+    required: false
+  labels:
+    description: 'List of custom labels'
+    required: false
+  sep-tags:
+    description: 'Separator to use for tags output (default \n)'
+    required: false
+  sep-labels:
+    description: 'Separator to use for labels output (default \n)'
+    required: false
+  bake-target:
+    description: 'Bake target name (default docker-metadata-action)'
+    required: false
+  github-token:
+    description: 'GitHub Token as provided by secrets'
+    default: ${{ github.token }}
+    required: true
+  # inputs from https://github.com/docker/build-push-action
+  add-hosts:
+    description: "List of a customs host-to-IP mapping (e.g., docker:10.180.0.1)"
+    required: false
+  allow:
+    description: "List of extra privileged entitlement (e.g., network.host,security.insecure)"
+    required: false
   build-args:
     description: "List of build-time variables"
+    required: false
+  build-contexts:
+    description: "List of additional build contexts (e.g., name=path)"
+    required: false
+  builder:
+    description: "Builder instance"
+    required: false
+  cache-from:
+    description: "List of external cache sources for buildx (e.g., user/app:cache, type=local,src=path/to/dir)"
+    required: false
+  cache-to:
+    description: "List of cache export destinations for buildx (e.g., user/app:cache, type=local,dest=path/to/dir)"
+    required: false
+  cgroup-parent:
+    description: "Optional parent cgroup for the container used in the build"
     required: false
   context:
     description: "Build's context is the set of files located in the specified PATH or URL"
@@ -39,37 +94,142 @@ inputs:
   file:
     description: "Path to the Dockerfile"
     required: false
+  labels:
+    description: "List of metadata for an image"
+    required: false
+  load:
+    description: "Load is a shorthand for --output=type=docker"
+    required: false
+    default: 'false'
+  network:
+    description: "Set the networking mode for the RUN instructions during build"
+    required: false
+  no-cache:
+    description: "Do not use cache when building the image"
+    required: false
+    default: 'false'
+  no-cache-filters:
+    description: "Do not cache specified stages"
+    required: false
+  outputs:
+    description: "List of output destinations (format: type=local,dest=path)"
+    required: false
+  platforms:
+    description: "List of target platforms for build"
+    required: false
+  pull:
+    description: "Always attempt to pull all referenced images"
+    required: false
+    default: 'false'
+  push:
+    description: "Push is a shorthand for --output=type=registry"
+    required: false
+    default: ${{ github.event_name == 'push' }}
+  secrets:
+    description: "List of secrets to expose to the build (e.g., key=string, GIT_AUTH_TOKEN=mytoken)"
+    required: false
+  secret-files:
+    description: "List of secret files to expose to the build (e.g., key=filename, MY_SECRET=./secret.txt)"
+    required: false
+  shm-size:
+    description: "Size of /dev/shm (e.g., 2g)"
+    required: false
+  ssh:
+    description: "List of SSH agent socket or keys to expose to the build"
+    required: false
+  tags:
+    description: "List of tags"
+    required: false
+  target:
+    description: "Sets the target stage to build"
+    required: false
+  ulimit:
+    description: "Ulimit options (e.g., nofile=1024:1024)"
+    required: false
+  github-token:
+    description: "GitHub Token used to authenticate against a repository for Git context"
+    default: ${{ github.token }}
+    required: false
+
+outputs:
+  # outputs from https://github.com/docker/metadata-action
+  version:
+    description: 'Generated Docker image version'
+    value: ${{ steps.meta.outputs.version }}
+  tags:
+    description: 'Generated Docker tags'
+    value: ${{ steps.meta.outputs.tags }}
+  labels:
+    description: 'Generated Docker labels'
+    value: ${{ steps.meta.outputs.labels }}
+  bake-file:
+    description: 'Bake definition file'
+    value: ${{ steps.meta.outputs.bake-file }}
+  json:
+    description: 'JSON output of tags and labels'
+    value: ${{ steps.meta.outputs.json }}
+  # outputs from https://github.com/docker/build-push-action
+  imageid:
+    description: 'Image ID'
+    value: ${{ steps.build.outputs.imageid }}
+  digest:
+    description: 'Image digest'
+    value: ${{ steps.build.outputs.digest }}
+  metadata:
+    description: 'Build result metadata'
+    value: ${{ steps.build.outputs.metadata }}
 
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v3
-      if: ${{ inputs.checkout == 'true' }}
     - uses: docker/login-action@v2
-      if: ${{ inputs.push == 'true'}}
+      if: ${{ inputs.registry && inputs.push == 'true' }}
       with:
         registry: ${{ inputs.registry }}
         username: ${{ inputs.username }}
         password: ${{ inputs.password }}
+        ecr: ${{ inputs.ecr }}
+        logout: ${{ inputs.logout }}
     - uses: docker/metadata-action@v4
       id: meta
       with:
-        images: |
-          ${{ inputs.registry }}/${{ inputs.image }}
-        tags: |
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=semver,pattern={{major}}
-          type=ref,event=pr
-          type=ref,event=branch
-          type=schedule
-          type=edge
-          type=sha
+        images: ${{ inputs.images }}
+        tags: ${{ inputs.tags }}
+        flavor: ${{ inputs.flavor }}
+        labels: ${{ inputs.labels }}
+        sep-tags: ${{ inputs.sep-tags }}
+        sep-labels: ${{ inputs.sep-labels }}
+        bake-target: ${{ inputs.bake-target }}
+        github-token: ${{ inputs.github-token }}
+    - uses: docker/setup-qemu-action@v1
+    - uses: docker/setup-buildx-action@v1
     - uses: docker/build-push-action@v3
+      id: build
       with:
+        add-hosts: ${{ inputs.add-hosts }}
+        allow: ${{ inputs.allow }}
+        build-args: ${{ inputs.build-args }}
+        build-contexts: ${{ inputs.build-contexts }}
+        builder: ${{ inputs.builder }}
+        cache-from: ${{ inputs.cache-from }}
+        cache-to: ${{ inputs.cache-to }}
+        cgroup-parent: ${{ inputs.cgroup-parent }}
         context: ${{ inputs.context }}
         file: ${{ inputs.file }}
-        push: ${{ inputs.push == 'true' }}
-        build-args: ${{ inputs.build-args }}
-        tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+        load: ${{ inputs.load }}
+        network: ${{ inputs.network }}
+        no-cache: ${{ inputs.no-cache }}
+        no-cache-filters: ${{ inputs.no-cache-filters }}
+        outputs: ${{ inputs.outputs }}
+        platforms: ${{ inputs.platforms }}
+        pull: ${{ inputs.pull }}
+        push: ${{ inputs.push }}
+        secrets: ${{ inputs.secrets }}
+        secret-files: ${{ inputs.secret-files }}
+        shm-size: ${{ inputs.shm-size }}
+        ssh: ${{ inputs.ssh }}
+        tags: ${{ steps.meta.outputs.tags }}
+        target: ${{ inputs.target }}
+        ulimit: ${{ inputs.ulimit }}
+        github-token: ${{ inputs.github-token }}
