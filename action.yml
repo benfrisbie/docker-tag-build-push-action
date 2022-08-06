@@ -94,9 +94,6 @@ inputs:
   file:
     description: "Path to the Dockerfile"
     required: false
-  labels:
-    description: "List of metadata for an image"
-    required: false
   load:
     description: "Load is a shorthand for --output=type=docker"
     required: false
@@ -137,18 +134,11 @@ inputs:
   ssh:
     description: "List of SSH agent socket or keys to expose to the build"
     required: false
-  tags:
-    description: "List of tags"
-    required: false
   target:
     description: "Sets the target stage to build"
     required: false
   ulimit:
     description: "Ulimit options (e.g., nofile=1024:1024)"
-    required: false
-  github-token:
-    description: "GitHub Token used to authenticate against a repository for Git context"
-    default: ${{ github.token }}
     required: false
 
 outputs:
