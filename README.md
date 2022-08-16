@@ -39,7 +39,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: benfrisbie/docker-tag-build-push-action/@v1
+      - uses: benfrisbie/docker-tag-build-push-action@v1
 ```
 
 ### Push to Docker Hub
@@ -58,7 +58,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: benfrisbie/docker-tag-build-push-action/@v1
+      - uses: benfrisbie/docker-tag-build-push-action@v1
         with:
             images: docker.io/${{ github.repository }}
             registry: 'docker.io'
@@ -88,7 +88,7 @@ jobs:
             registry: 'docker.io'
             username: ${{ secrets.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - uses: benfrisbie/docker-tag-build-push-action/@v1
+      - uses: benfrisbie/docker-tag-build-push-action@v1
         with:
             images: |
                 docker.io/${{ github.repository }}
