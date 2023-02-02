@@ -70,6 +70,9 @@ inputs:
   allow:
     description: "List of extra privileged entitlement (e.g., network.host,security.insecure)"
     required: false
+  attests:
+    description: "List of attestation parameters (e.g., type=sbom,generator=image)"
+    required: false
   build-args:
     description: "List of build-time variables"
     required: false
@@ -94,6 +97,7 @@ inputs:
   file:
     description: "Path to the Dockerfile"
     required: false
+  # labels: 'labels' input is joined with the same one from https://github.com/docker/metadata-action
   load:
     description: "Load is a shorthand for --output=type=docker"
     required: false
@@ -114,6 +118,9 @@ inputs:
   platforms:
     description: "List of target platforms for build"
     required: false
+  provenance:
+    description: "Generate provenance attestation for the build (shorthand for --attest=type=provenance)"
+    required: false
   pull:
     description: "Always attempt to pull all referenced images"
     required: false
@@ -122,6 +129,9 @@ inputs:
     description: "Push is a shorthand for --output=type=registry"
     required: false
     default: ${{ github.event_name == 'push' }}
+  sbom:
+    description: "Generate SBOM attestation for the build (shorthand for --attest=type=sbom)"
+    required: false
   secrets:
     description: "List of secrets to expose to the build (e.g., key=string, GIT_AUTH_TOKEN=mytoken)"
     required: false
@@ -198,6 +208,7 @@ runs:
       with:
         add-hosts: ${{ inputs.add-hosts }}
         allow: ${{ inputs.allow }}
+        attests: ${{ inputs.attests }}
         build-args: ${{ inputs.build-args }}
         build-contexts: ${{ inputs.build-contexts }}
         builder: ${{ inputs.builder }}
@@ -213,8 +224,10 @@ runs:
         no-cache-filters: ${{ inputs.no-cache-filters }}
         outputs: ${{ inputs.outputs }}
         platforms: ${{ inputs.platforms }}
+        provenance: ${{ inputs.provenance }}
         pull: ${{ inputs.pull }}
         push: ${{ inputs.push }}
+        sbom: ${{ inputs.sbom }}
         secrets: ${{ inputs.secrets }}
         secret-files: ${{ inputs.secret-files }}
         shm-size: ${{ inputs.shm-size }}
