@@ -28,6 +28,10 @@ inputs:
     default: 'true'
     required: false
   # inputs from https://github.com/docker/metadata-action
+  metadata-context:
+    description: 'Where to get context data. Allowed options are "workflow"  (default), "git".'
+    default: "workflow"
+    required: true
   images:
     description: 'List of Docker images to use as base name for tags'
     required: true
@@ -193,6 +197,7 @@ runs:
     - uses: docker/metadata-action@v4.5.0
       id: meta
       with:
+        context: ${{ inputs.metadata-context }}
         images: ${{ inputs.images }}
         tags: ${{ inputs.tags }}
         flavor: ${{ inputs.flavor }}
