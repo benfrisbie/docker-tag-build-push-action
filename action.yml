@@ -28,6 +28,10 @@ inputs:
     default: 'true'
     required: false
   # inputs from https://github.com/docker/metadata-action
+  metadata-context:
+    description: 'Where to get context data. Allowed options are "workflow"  (default), "git".'
+    default: "workflow"
+    required: true
   images:
     description: 'List of Docker images to use as base name for tags'
     required: true
@@ -182,7 +186,7 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - uses: docker/login-action@v2.1.0
+    - uses: docker/login-action@v2.2.0
       if: ${{ inputs.registry && inputs.push == 'true' }}
       with:
         registry: ${{ inputs.registry }}
@@ -190,9 +194,10 @@ runs:
         password: ${{ inputs.password }}
         ecr: ${{ inputs.ecr }}
         logout: ${{ inputs.logout }}
-    - uses: docker/metadata-action@v4.3.0
+    - uses: docker/metadata-action@v4.5.0
       id: meta
       with:
+        context: ${{ inputs.metadata-context }}
         images: ${{ inputs.images }}
         tags: ${{ inputs.tags }}
         flavor: ${{ inputs.flavor }}
