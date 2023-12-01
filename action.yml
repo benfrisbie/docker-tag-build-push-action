@@ -54,11 +54,17 @@ inputs:
   labels:
     description: 'List of custom labels'
     required: false
+  annotations:
+    description: 'List of custom annotations'
+    required: false
   sep-tags:
     description: 'Separator to use for tags output (default \n)'
     required: false
   sep-labels:
     description: 'Separator to use for labels output (default \n)'
+    required: false
+  sep-annotations:
+    description: 'Separator to use for annotations output (default \n)'
     required: false
   bake-target:
     description: 'Bake target name (default docker-metadata-action)'
@@ -166,8 +172,20 @@ outputs:
   labels:
     description: 'Generated Docker labels'
     value: ${{ steps.meta.outputs.labels }}
+  annotations:
+    description: 'Generated annotations'
+    value: ${{ steps.meta.outputs.annotations }}
+  bake-file-tags:
+    description: 'Bake definition file with tags'
+    value: ${{ steps.meta.outputs.bake-file-tags }}
+  bake-file-labels:
+    description: 'Bake definition file with labels'
+    value: ${{ steps.meta.outputs.bake-file-labels }}
+  bake-file-annotations:
+    description: 'Bake definition file with annotations'
+    value: ${{ steps.meta.outputs.bake-file-annotations }}
   bake-file:
-    description: 'Bake definition file'
+    description: 'Bake definition file with tags and labels'
     value: ${{ steps.meta.outputs.bake-file }}
   json:
     description: 'JSON output of tags and labels'
