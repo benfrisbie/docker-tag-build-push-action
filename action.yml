@@ -226,7 +226,7 @@ runs:
         github-token: ${{ inputs.github-token }}
     - uses: docker/setup-qemu-action@v3.2.0
     - uses: docker/setup-buildx-action@v3.8.0
-    - uses: docker/build-push-action@v6.10.0
+    - uses: docker/build-push-action@v6.13.0
       id: build
       with:
         add-hosts: ${{ inputs.add-hosts }}
