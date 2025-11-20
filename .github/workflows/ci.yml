@@ -12,7 +12,7 @@ jobs:
   basic:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./
         with:
           file: ./tests/Dockerfile
