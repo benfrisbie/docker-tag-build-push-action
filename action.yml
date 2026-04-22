@@ -212,7 +212,7 @@ runs:
         password: ${{ inputs.password }}
         ecr: ${{ inputs.ecr }}
         logout: ${{ inputs.logout }}
-    - uses: docker/metadata-action@v5.8.0
+    - uses: docker/metadata-action@v6.0.0
       id: meta
       with:
         context: ${{ inputs.metadata-context }}
