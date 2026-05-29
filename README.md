@@ -1,3 +1,6 @@
+> [!CAUTION]
+> # [DEPRECATED] This project is no longer maintained. Use the officially supported https://github.com/docker/github-builder instead.
+
 [![GitHub release](https://img.shields.io/github/release/benfrisbie/docker-tag-build-push-action.svg?style=flat-square)](https://github.com/benfrisbie/docker-tag-build-push-action/releases/latest)
 [![GitHub marketplace](https://img.shields.io/badge/marketplace-benfrisbie--docker--tag--build--push--action-blue?logo=github&style=flat-square)](https://github.com/marketplace/actions/docker-tag-build-push)
 [![CI workflow](https://img.shields.io/github/actions/workflow/status/benfrisbie/docker-tag-build-push-action/ci.yml?label=ci&logo=github&style=flat-square)](https://github.com/benfrisbie/docker-tag-build-push-action/actions?workflow=ci)
